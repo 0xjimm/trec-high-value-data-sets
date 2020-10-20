@@ -30,8 +30,9 @@ def extract():
     # connection
     con = urllib.request.urlopen(req)
 
-    # zipfile
-    myzip = ZipFile(BytesIO(con.read())).extract("trecfile.txt")
+    # open zipped download
+    with ZipFile(BytesIO(con.read())) as myzip:
+        thezip = myzip.open("trecfile.txt")
 
     # column names
     column_names = [
@@ -71,7 +72,7 @@ def extract():
 
     # read zipfile to DataFrame
     df = pd.read_csv(
-        myzip,
+        thezip,
         names=column_names,
         index_col=False,
         sep="\t",
@@ -297,8 +298,7 @@ if __name__ == "__main__":
 
     # scheduled to run every 12 hours
     schedule = IntervalSchedule(
-        start_date=datetime.utcnow(),
-        interval=timedelta(hours=12),
+        start_date=datetime.utcnow(), interval=timedelta(hours=12),
     )
 
     # define Prefect flow
