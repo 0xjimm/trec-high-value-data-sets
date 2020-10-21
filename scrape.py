@@ -298,7 +298,8 @@ if __name__ == "__main__":
 
     # scheduled to run every 12 hours
     schedule = IntervalSchedule(
-        start_date=datetime.utcnow(), interval=timedelta(hours=12),
+        start_date=datetime.utcnow() + timedelta(seconds=5),
+        interval=timedelta(hours=12),
     )
 
     # define Prefect flow
