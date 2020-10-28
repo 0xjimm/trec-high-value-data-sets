@@ -8,6 +8,7 @@ from datetime import timedelta, datetime
 
 from prefect import task, Flow
 from prefect.schedules import IntervalSchedule
+from prefect.environments import LocalEnvironment
 
 
 @task(max_retries=3, retry_delay=timedelta(minutes=1))
@@ -307,6 +308,8 @@ if __name__ == "__main__":
         realtor_data = extract()
         houston_realtor_data = transform(realtor_data)
         load_to_database = load(houston_realtor_data)
+
+    flow.environment = LocalEnvironment(labels=["trec-prod"])
 
     # register flow with Prefect Cloud
     flow.register(project_name="trec-high-value-data-sets")
