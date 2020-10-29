@@ -1,3 +1,4 @@
+import shutil
 import urllib
 import pandas as pd
 
@@ -278,7 +279,24 @@ def transform(df_realtors):
     return df_houston_realtors
 
 
-@task(max_retries=3, retry_delay=timedelta(minutes=1))
+def archive_database(task, old_state, new_state):
+    """
+    Archive database on task retry
+    """
+
+    if new_state.is_retrying():
+
+        src = "houston_realtors.db"
+        dst = f"database-archive\\{src[:-3]}-{datetime.now().strftime('%Y-%m-%d-%H-%M')}.db"
+
+        shutil.move(src, dst)
+
+    return new_state
+
+
+@task(
+    max_retries=3, retry_delay=timedelta(minutes=1), state_handlers=[archive_database]
+)
 def load(df_houston_realtors):
     """
     Load DataFrame of Houston Brokers and Realtors into a Database.
