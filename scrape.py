@@ -11,7 +11,7 @@ from prefect.schedules import IntervalSchedule
 from prefect.environments import LocalEnvironment
 
 
-@task(max_retries=3, retry_delay=timedelta(minutes=1))
+@task(max_retries=3, retry_delay=timedelta(minutes=1), cache_for=timedelta(hours=11))
 def extract():
     """
     Download and return a DataFrame of all Texas Brokers and Realtors
